@@ -9,7 +9,7 @@
     
     <Modal @confirm-sorting="handleConfirm" @cancel-sorting="handleCancel" v-if="showModal"></Modal>
     <!-- <drag></drag> -->
-    <Table v-if="showTable" :peoples="peoples"></Table>
+    <Table v-if="showTable" @finished-sorting="handleFinish" :peoples="peoples"></Table>
     <!-- <dragg></dragg> -->
     
   </div>
@@ -17,7 +17,6 @@
 
 <script>
 import fakeData from '../fake_data';
-import drag from './components/drag.vue';
 import Modal from './components/Modal.vue';
 import Table from './components/Table.vue';
 
@@ -27,7 +26,6 @@ import Table from './components/Table.vue';
     components: {
       Modal,
       Table,
-      drag,
     },
     data() {
       return {
@@ -36,26 +34,8 @@ import Table from './components/Table.vue';
         isTime: false,
         time: '',
         numberOfPeople: "",
-        peoples: [
-          // {
-          //   id: 101,
-          //   email: "abc@gmail.com",
-          //   potatoes: 10,
-          //   tags: ['Customers', 'Vip'],
-          //   fullName: 'Jonab ABC',
-          //   location: 'Bangladesh',
-          //   date: '15/05/2022'
-          // },
-          // {
-          //   id: 102,
-          //   email: "xyz@gmail.com",
-          //   potatoes: 10,
-          //   tags: ['Customers'],
-          //   fullName: 'Jonab XYZ',
-          //   location: 'Bangladesh',
-          //   date: '15/05/2022'
-          // },
-        ]
+        peoples: [],
+        startInterval: ''
       }
     },
     methods: {
@@ -76,7 +56,6 @@ import Table from './components/Table.vue';
         this.showModal = false;
         this.showTable = true;
         
-        
       },
       handleCancel() {
 
@@ -88,7 +67,7 @@ import Table from './components/Table.vue';
 
         let countDown = 0;
         let now = 0;
-        const startTime = setInterval(() => {
+        this.startInterval = setInterval(() => {
 
           now++;
           const distance = countDown + now;
@@ -96,8 +75,19 @@ import Table from './components/Table.vue';
           const minutes = Math.floor((distance % 3600) / 60);
           const seconds = distance % 60
 
-          this.time = `${hours}-${minutes}-${seconds}`;
-        }, 1000)
+          this.time = `${hours}h-${minutes}m-${seconds}s`;
+          
+        }, 1000);
+
+      },
+      handleFinish(){
+        
+        clearInterval(this.startInterval);
+        this.time = ``;
+        this.isTime = false;
+        this.showTable = false;
+        this.peoples = [];
+        alert(`Congratulations!.You have use time: ${this.time}`)
       }
     },
     
